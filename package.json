@@ -1,12 +1,12 @@
 {
-  "name": "qican-article-system",
-  "version": "0.3.0",
-  "description": "赛博祈蚕与长文工作流",
+  "name": "qican-skills",
+  "version": "0.4.0",
+  "description": "Qican-Skills · 赛博祈蚕与长文工作流",
   "license": "MIT",
   "private": true,
   "type": "module",
   "bin": {
-    "qican-article-system": "bin/install.js"
+    "qican-skills": "bin/install.js"
   },
   "engines": {
     "node": ">=22.2.0"
@@ -22,7 +22,8 @@
     "bin",
     "scripts",
     "skills",
-    "examples"
+    "examples",
+    "skills.json"
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -31,6 +32,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tangchunhao71-hash/qican-article-system.git"
+    "url": "git+https://github.com/tangchunhao71-hash/Qican-Skills.git"
   }
 }

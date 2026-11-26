@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {checkPublicFiles} from './privacy.mjs';
-import {artifacts,sha256,singleFile,skillFiles} from './release.mjs';
+import {artifacts,resolveSelection,sha256,singleFile,skillFiles} from './release.mjs';
 
 const sample = (name,body)=>new Map([[name,Buffer.from(body)]]);
 test('隐私检查拦截虚构凭证、私人服务、个人路径、二进制和越界引用',()=>{
@@ -13,6 +13,7 @@ test('隐私检查拦截虚构凭证、私人服务、个人路径、二进制�
   assert.throws(()=>checkPublicFiles(sample('input.md',pretendLocal)),/路径/);
   assert.throws(()=>checkPublicFiles(sample('input.md','[outside](../outside.md)')),/越界/);
   assert.throws(()=>checkPublicFiles(sample('.env','placeholder')),/路径/);
+  assert.throws(()=>checkPublicFiles(sample('skills/writer/SKILL.md','`../another-skill/references/mirror.md`')),/越界/);
   assert.throws(()=>checkPublicFiles(new Map([['sample.md',Buffer.from([0xff])]])),/UTF-8/);
 });
 
@@ -32,4 +33,13 @@ test('整个 Skill 源使用 Windows CRLF 时，单文件输出和 LF 相同',()
   const files=skillFiles();
   const crlf=new Map([...files].map(([name,source])=>[name,Buffer.from(source.toString('utf8').replaceAll('\n','\r\n'))]));
   assert.deepEqual(singleFile(files),singleFile(crlf));
+});
+
+test('计算传递依赖，拒绝循环和未知依赖',()=>{
+  const graph=new Map([['a',[]],['b',['a']],['c',['b']]]);
+  assert.deepEqual(resolveSelection(['c','b'],graph),['a','b','c']);
+  assert.throws(()=>resolveSelection(['missing'],graph),/未知 Skill/);
+  assert.throws(()=>resolveSelection(['loop'],new Map([['loop',['loop']]])),/循环依赖/);
+  assert.deepEqual(resolveSelection(['article-workflow']),['cyber-qican','article-workflow']);
+  assert([...skillFiles(['cyber-qican']).keys()].every(path=>path.startsWith('skills/cyber-qican/')));
 });

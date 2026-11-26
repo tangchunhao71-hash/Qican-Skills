@@ -6,10 +6,11 @@ import {dirname,join,resolve} from 'node:path';
 import {createInterface} from 'node:readline/promises';
 import {fileURLToPath} from 'node:url';
 import {parseArgs} from 'node:util';
-import {manifest,names,sha256,skillFiles} from '../scripts/release.mjs';
+import {manifest,names,resolveSelection,sha256,skillFiles} from '../scripts/release.mjs';
 
 const receiptName = '.qican-release.json';
-const startPage = `https://github.com/tangchunhao71-hash/qican-article-system/blob/v${manifest.version}/START.md`;
+const legacySkills = new Set(['cyber-qican','article-workflow']);
+const startPage = `https://github.com/tangchunhao71-hash/Qican-Skills/blob/v${manifest.version}/START.md`;
 
 function stat(path) {
   try { return lstatSync(path); }
@@ -49,16 +50,17 @@ export async function chooseDirectory(values, home, ask, output) {
 }
 
 function readReceipt(directory,name) {
-  const receiptPath = join(directory,receiptName);
-  if (!stat(receiptPath)?.isFile()) return null;
+  const path = join(directory,receiptName);
+  if (!stat(path)?.isFile()) return null;
   let receipt;
-  try { receipt = JSON.parse(readFileSync(receiptPath,'utf8')); }
+  try { receipt = JSON.parse(readFileSync(path,'utf8')); }
   catch (error) {
     if (error instanceof SyntaxError) return null;
     throw error;
   }
-  return receipt?.package === manifest.name && receipt.skill === name &&
-    typeof receipt.version === 'string' ? receipt : null;
+  const owned = receipt?.package === manifest.name ||
+    (receipt?.package === 'qican-article-system' && legacySkills.has(name));
+  return owned && receipt.skill === name && typeof receipt.version === 'string' ? receipt : null;
 }
 
 export function installedAt(target) {
@@ -67,27 +69,62 @@ export function installedAt(target) {
   return names.flatMap(name=>{
     const path = join(target,name);
     const current = stat(path);
-    if (!current) return [];
-    return [{name,receipt:current.isDirectory()?readReceipt(path,name):null}];
+    return current ? [{name,receipt:current.isDirectory()?readReceipt(path,name):null}] : [];
   });
 }
 
+function matchesFiles(target,name,files) {
+  const prefix = `skills/${name}/`;
+  return [...files].filter(([rel])=>rel.startsWith(prefix)).every(([rel,expected])=>{
+    const path = join(target,rel.slice(7));
+    return stat(path)?.isFile() && readFileSync(path).equals(expected);
+  });
+}
+
+export function planInstall(target,{skills=names,upgrade=false}={}) {
+  const prior = new Map(installedAt(target).map(row=>[row.name,row.receipt]));
+  const requested = resolveSelection(skills);
+  if (!requested.length) throw new Error('请至少选择一个 Skill');
+  const dependents = upgrade ? [...prior].filter(([name,receipt])=>
+    receipt && resolveSelection([name]).some(dependency=>requested.includes(dependency))
+  ).map(([name])=>name) : [];
+  const selected = resolveSelection([...requested,...dependents]);
+  const files = skillFiles(selected);
+  const rows = selected.map(name=>{
+    if (!prior.has(name)) return {name,action:'install'};
+    const receipt = prior.get(name);
+    if (!receipt) return {name,action:'foreign'};
+    if (upgrade) return {name,action:'replace',version:receipt.version};
+    const matches = receipt.package === manifest.name && receipt.version === manifest.version &&
+      matchesFiles(target,name,files);
+    return {name,action:matches?'reuse':'requires-upgrade',version:receipt.version};
+  });
+  return {files,rows};
+}
+
+function assertWritable(rows) {
+  const foreign = rows.find(row=>row.action === 'foreign');
+  if (foreign) throw new Error(`已有其他方式安装的同名 Skill ${foreign.name}。请先手动备份，或另选目录`);
+  const older = rows.find(row=>row.action === 'requires-upgrade');
+  if (older) throw new Error(`已有同名目录 ${older.name}，默认保留。确认后使用 --upgrade`);
+}
+
 function removeScratch(transaction,parent) {
-  // Only remove our own mkdtemp sibling, never a user-chosen target or backup.
-  if (dirname(transaction) !== parent || !transaction.startsWith(join(parent,'.qican-article-system-'))) {
+  if (dirname(transaction) !== parent || !transaction.startsWith(join(parent,'.qican-skills-'))) {
     throw new Error('无法核实工作目录的清理边界');
   }
   rmSync(transaction,{recursive:true});
 }
 
-export function install(target, {upgrade=false,move=renameSync}={}) {
+export function install(target,{skills=names,upgrade=false,confirmedRows,move=renameSync}={}) {
   target = resolve(target);
   if (dirname(target) === target) throw new Error('请选择技能目录，不能使用文件系统根目录');
-  const files = skillFiles();
+  const initial = planInstall(target,{skills,upgrade});
+  assertWritable(initial.rows);
   mkdirSync(target,{recursive:true});
-  if (!stat(target)?.isDirectory()) throw new Error('目标需为普通目录');
   const parent = dirname(target);
   const lockId = createHash('sha256').update(process.platform === 'win32' ? target.toLowerCase() : target).digest('hex').slice(0,12);
+  // Keep the lock name stable so the v0.3 installer serializes against this installer.
   const lock = join(parent,`.qican-article-system-lock-${lockId}`);
   try { mkdirSync(lock); }
   catch (error) {
@@ -95,10 +132,15 @@ export function install(target, {upgrade=false,move=renameSync}={}) {
     throw error;
   }
   try {
-    const existing = installedAt(target);
-    if (existing.length && !upgrade) throw new Error('已存在同名 Skill，当前未覆盖');
-    if (existing.some(row=>!row.receipt)) throw new Error('发现由其他方式安装的同名 Skill。请先手动备份，或另选目录');
-    const transaction = mkdtempSync(join(parent,'.qican-article-system-'));
+    const {files,rows} = planInstall(target,{skills,upgrade});
+    if (JSON.stringify(confirmedRows ?? initial.rows) !== JSON.stringify(rows)) {
+      throw new Error('安装目标已变化，请重新预览');
+    }
+    assertWritable(rows);
+    const changes = rows.filter(row=>row.action !== 'reuse');
+    const changed = changes.map(row=>row.name);
+    if (!changed.length) return {backup:null,changed};
+    const transaction = mkdtempSync(join(parent,'.qican-skills-'));
     const incoming = join(transaction,'incoming');
     const previous = join(transaction,'previous');
     const backedUp = [];
@@ -107,27 +149,30 @@ export function install(target, {upgrade=false,move=renameSync}={}) {
       mkdirSync(incoming);
       mkdirSync(previous);
       for (const [rel,bytes] of files) {
+        if (!changed.includes(rel.split('/')[1])) continue;
         const out = join(incoming,rel.slice(7));
         mkdirSync(dirname(out),{recursive:true});
         writeFileSync(out,bytes,{flag:'wx'});
         if (sha256(readFileSync(out)) !== sha256(bytes)) throw new Error(`暂存文件校验失败 ${rel}`);
       }
-      for (const name of names) {
+      for (const name of changed) {
         const receipt = {package:manifest.name,skill:name,version:manifest.version};
         writeFileSync(join(incoming,name,receiptName),JSON.stringify(receipt)+'\n',{flag:'wx'});
       }
-      // Verify both replacements before moving anything in the active Skills directory.
-      for (const {name} of existing) {
+      for (const {name,action} of changes) {
+        if (action !== 'replace') continue;
         move(join(target,name),join(previous,name));
         backedUp.push(name);
       }
-      for (const name of names) {
+      for (const name of changed) {
         move(join(incoming,name),join(target,name));
         placed.push(name);
       }
-      const installed = installedAt(target);
-      if (installed.length !== names.length || installed.some(r=>r.receipt?.version !== manifest.version)) {
-        throw new Error('双 Skill 安装读回失败');
+      for (const name of changed) {
+        const receipt = readReceipt(join(target,name),name);
+        if (receipt?.version !== manifest.version || !matchesFiles(target,name,files)) {
+          throw new Error(`安装读回失败 ${name}`);
+        }
       }
     } catch (error) {
       const failures = [];
@@ -145,10 +190,9 @@ export function install(target, {upgrade=false,move=renameSync}={}) {
     }
     if (!backedUp.length) {
       removeScratch(transaction,parent);
-      return {backup:null};
+      return {backup:null,changed};
     }
-    const backup = previous;
-    return {backup};
+    return {backup:previous,changed};
   } finally {
     rmdirSync(lock);
   }
@@ -156,35 +200,45 @@ export function install(target, {upgrade=false,move=renameSync}={}) {
 
 async function cli() {
   const {values} = parseArgs({options:{
-    target:{type:'string'},dir:{type:'string'},preview:{type:'boolean'},
-    upgrade:{type:'boolean'},yes:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},
+    target:{type:'string'},dir:{type:'string'},skill:{type:'string',multiple:true},
+    all:{type:'boolean'},preview:{type:'boolean'},upgrade:{type:'boolean'},
+    yes:{type:'boolean'},help:{type:'boolean'},version:{type:'boolean'},list:{type:'boolean'},
   }});
   if (values.help) {
-    console.log('qican-article-system [--target codex|agents|claude-code|cursor | --dir PATH] [--preview] [--upgrade] [--yes]');
+    console.log('qican-skills [--target codex|agents|claude-code|cursor | --dir PATH] [--all | --skill NAME ...] [--preview] [--upgrade] [--yes] [--list]');
     return;
   }
   if (values.version) { console.log(manifest.version); return; }
+  if (values.list) {
+    for (const name of names) {
+      const required = resolveSelection([name]).filter(dependency=>dependency!==name);
+      console.log(required.length ? `${name} · 依赖 ${required.join(', ')}` : name);
+    }
+    return;
+  }
+  if (values.all && values.skill?.length) throw new Error('请选择 --all 或 --skill');
   if (values.yes && !values.target && !values.dir) throw new Error('--yes 需要显式指定 --target 或 --dir');
+  const skills = values.skill ?? names;
   const terminal = process.stdin.isTTY && process.stdout.isTTY;
   const rl = terminal ? createInterface({input:process.stdin,output:process.stdout}) : null;
   try {
     const ask = rl ? prompt=>rl.question(prompt) : null;
     const dir = await chooseDirectory(values,homedir(),ask,console.log);
     if (!dir) { console.log('已取消。'); return; }
-    skillFiles();
-    const current = installedAt(dir);
-    console.log(`Qican Article System ${manifest.version}\n目标 ${dir}\n计划 ${names.join(' + ')}`);
-    for (const row of current) console.log(`已有 ${row.name} · ${row.receipt?.version ?? '其他方式安装'}`);
-    if (values.preview) { console.log('仅预览。' ); return; }
-    if (current.length && !values.upgrade) throw new Error('已有同名目录。默认保留。');
-    if (current.some(row=>!row.receipt)) throw new Error('已有其他方式安装的同名 Skill。请先手动备份，或另选目录');
+    const {rows} = planInstall(dir,{skills,upgrade:values.upgrade});
+    const labels = {install:'安装',replace:'备份并替换',reuse:'已就绪',foreign:'其他方式安装', 'requires-upgrade':'需要 --upgrade'};
+    console.log(`Qican-Skills ${manifest.version}\n目标 ${dir}`);
+    for (const row of rows) console.log(`计划 ${row.name} · ${labels[row.action]}${row.version?' · '+row.version:''}`);
+    if (values.preview) { console.log('仅预览。'); return; }
+    assertWritable(rows);
+    if (rows.every(row=>row.action === 'reuse')) { console.log('所选 Skill 已就绪。'); return; }
     if (!values.yes) {
       if (!ask) throw new Error('非交互运行请明确提供目标和 --yes，或使用 --preview');
       const reply = (await ask('确认写入？[y/N] ')).trim();
       if (!/^(y|yes)$/i.test(reply)) { console.log('已取消。'); return; }
     }
-    const {backup} = install(dir,{upgrade:values.upgrade});
-    console.log('已安装两个 Skill。');
+    const {backup,changed} = install(dir,{skills,upgrade:values.upgrade,confirmedRows:rows});
+    console.log(`已就绪 ${changed.join(' + ')}`);
     if (backup) console.log(`旧版备份 ${backup}`);
     console.log(`第一次使用 ${startPage}`);
   } finally {

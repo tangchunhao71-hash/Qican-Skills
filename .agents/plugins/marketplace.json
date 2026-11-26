@@ -1,11 +1,11 @@
 {
-  "name": "qican-article-system",
+  "name": "qican-skills",
   "interface": {
-    "displayName": "Qican Article System"
+    "displayName": "Qican-Skills"
   },
   "plugins": [
     {
-      "name": "qican-article-system",
+      "name": "qican-skills",
       "source": {
         "source": "local",
         "path": "./"

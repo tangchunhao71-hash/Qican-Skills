@@ -1,63 +1,71 @@
-# 赛博祈蚕 · Qican Article System
+# Qican-Skills · 祈蚕的 Skills 合集
 
-从一句没说清楚的困惑开始。赛博祈蚕会帮你找到真正卡住的判断，看看有哪些解释，找有用的知识和反例。你想写成长文时，文章流程会把这些认识接成选题卡、稿件和可回查的复盘。
+有个问题还说不清，可以用「赛博祈蚕」一起想。已经有想法、选题卡或稿件，可以用「文章流程」从当前阶段继续。两项 Skill 可以独立调用，共用 [规则镜像 v0.33](skills/cyber-qican/references/confirmed-rules-mirror.md)。
 
 > 我试了很多学习方法，但真正做事时还是反复卡在同一步。先陪我想一下。
 
-不必准备 Prompt 或整理知识库。你可以只聊一件事，也可以带上旧文章、笔记或已确认的提纲。第一次使用见 [START](START.md)。
+第一次用从这句口述就够了。你也可以带上相关笔记、旧文或提纲。[第一次使用](START.md)
 
-## 选择一种用法
+| Skill | 用途 | 安装依赖 |
+| --- | --- | --- |
+| [赛博祈蚕 · cyber-qican](skills/cyber-qican/SKILL.md) | 定义问题，找反例和知识缺口，形成并检验自己的判断。 | 无 |
+| [文章流程 · article-workflow](skills/article-workflow/SKILL.md) | 接续选题、研究、交接、初稿、审阅、精修和发布后复盘。 | cyber-qican 提供共用规则文件 |
 
-| 想怎么用 | 入口 |
-| --- | --- |
-| 随手在常用 AI 里聊 | 下载 [零安装单文件](https://github.com/tangchunhao71-hash/qican-article-system/releases/latest/download/cyber-qican.md)，把全文粘进去或作为附件上传。有网页读取能力的 AI 也可以打开文件链接。 |
-| 在本机 Agent 里反复调用 | 用下面的一键安装，或解压 [双 Skill 包](https://github.com/tangchunhao71-hash/qican-article-system/releases/latest/download/qican-article-system-skills.zip)。 |
-| 按 Plugin 管理两个 Skill | 从 [GitHub Release](https://github.com/tangchunhao71-hash/qican-article-system/releases/latest) 下载插件 ZIP，或在 Codex 添加此仓库的插件目录。 |
+## 三种使用方式
 
-### 一键安装与固定版本
+- **普通 AI**　下载 [零安装单文件](https://github.com/tangchunhao71-hash/Qican-Skills/releases/latest/download/cyber-qican.md)，把全文粘进对话或上传，再说你想弄清楚的事。
+- **Agent Skills**　用下方安装器选单项或全部安装，也可以下载 [Skills ZIP](https://github.com/tangchunhao71-hash/Qican-Skills/releases/latest/download/qican-skills-skills.zip) 手动安装。
+- **Plugin**　从 [GitHub Release](https://github.com/tangchunhao71-hash/Qican-Skills/releases/latest) 下载 Plugin ZIP，或在 Codex 添加下面的 GitHub 插件目录。
 
-需要 Node.js 22.2 或更新版本，以及 npm 和 Git。默认显示目标和操作，再由你确认。只装到你选的一个目录。
+### 安装到 Agent
+
+需要 Node.js 22.2 或更新版本，以及 npm 和 Git。以下以 Codex 为例，固定到 v0.4.0。
 
 ```sh
-npx github:tangchunhao71-hash/qican-article-system
-npx github:tangchunhao71-hash/qican-article-system#v0.3.0 --target codex --preview
-npx github:tangchunhao71-hash/qican-article-system#v0.3.0 --target codex
-npx git+https://github.com/tangchunhao71-hash/qican-article-system.git#v0.3.0 --target codex
+# 查看可用 Skill 和依赖
+npx github:tangchunhao71-hash/Qican-Skills#v0.4.0 --list
+
+# 只安装赛博祈蚕
+npx github:tangchunhao71-hash/Qican-Skills#v0.4.0 --target codex --skill cyber-qican
+
+# 预览文章流程及其依赖
+npx github:tangchunhao71-hash/Qican-Skills#v0.4.0 --target codex --skill article-workflow --preview
+
+# 安装全部
+npx github:tangchunhao71-hash/Qican-Skills#v0.4.0 --target codex --all
 ```
 
-`--target` 可用 `codex`、`agents`、`claude-code` 或 `cursor`。Codex 与 Agents 共享 `~/.agents/skills`。`--dir "<目标技能目录>"` 可选项目或自定义目录。已有同名目录时默认停下。由本安装器安装的版本可加 `--upgrade` 更新，备份位置会显示在结果里。手动安装的版本请先自行备份并移出扫描目录。无人值守时，只有你显式提供目标和 `--yes` 才执行。
+`--skill` 可重复。省略选择时默认全装。`--target` 可用 `codex`、`agents`、`claude-code` 或 `cursor`，也可用 `--dir "<技能目录>"`。安装前会显示计划。同名手动安装默认保留。非交互写入需要你显式指定目标和 `--yes`。GitHub 简写遇到 SSH 配置问题时可用 `npx git+https://github.com/tangchunhao71-hash/Qican-Skills.git#v0.4.0`。
 
-npx 首次使用需要从 GitHub 下载包。安装器从包内读取文件，仅写本机选定位置。
+手动安装时，将所选 Skill 的目录放入宿主 Skills 目录。装文章流程时，把两个目录并排放置，保留相对引用。目录来自宿主文档，当前版本的实测范围见 [验证记录](examples/validation.md)。
 
-进程被强制终止时，请保留目标目录旁的备份和锁，核对旧版本位置后再处理。安装器会在捕获到替换失败时主动恢复，两次目录替换之间仍存在短暂的中间状态。
-
-### 手动安装
-
-解压双 Skill ZIP，把 `cyber-qican` 和 `article-workflow` 两个目录并排放进同一个 Skills 目录。文章流程由相邻目录读取共用镜像。常见个人目录见下表。表中是按各宿主文档配置的路径，安装器文件操作和实际对话加载分别验证。
-
-| 宿主 | 个人目录 | 参考 |
-| --- | --- | --- |
-| Codex / Agents | `~/.agents/skills` | [Codex Skills 文档](https://learn.chatgpt.com/docs/build-skills) |
-| Claude Code | `~/.claude/skills` | [Claude Code Skills 文档](https://code.claude.com/docs/en/skills) |
-| Cursor | `~/.cursor/skills` | [Cursor Skills 文档](https://cursor.com/docs/skills) |
-
-把两个目录放好后，在宿主里选对应 Skill，或直接说「用赛博祈蚕陪我想清楚」和「用文章流程从这份提纲继续」。已经通过插件安装时，通常直接使用其中的 Skill 即可。
+| 宿主 | 个人 Skills 目录 |
+| --- | --- |
+| Codex / Agents | `~/.agents/skills` |
+| Claude Code | `~/.claude/skills` |
+| Cursor | `~/.cursor/skills` |
 
 ### Codex 插件目录
 
 ```sh
-codex plugin marketplace add tangchunhao71-hash/qican-article-system
-codex plugin add qican-article-system@qican-article-system
+codex plugin marketplace add tangchunhao71-hash/Qican-Skills
+codex plugin add qican-skills@qican-skills
 ```
 
-也可以在支持本地插件的桌面端选择仓库目录。此发行版通过 GitHub 分发。 [Codex 插件文档](https://developers.openai.com/plugins/build/plugins)
+[Codex 插件分发文档](https://developers.openai.com/plugins/build/plugins)
 
-## 两个 Skill
+## 从 v0.3.0 迁移
 
-- [赛博祈蚕](skills/cyber-qican/SKILL.md)从真实处境定义问题，比较解释和证据，按需连接知识，帮助用户形成并检验自己的判断。
-- [文章流程](skills/article-workflow/SKILL.md)按当前成果接续选题、研究、交接、初稿、审阅、精修和发布后复盘。涉及外部保存或发布时，以当前环境的能力和你的明确授权为准。
-- [规则镜像 v0.33](skills/cyber-qican/references/confirmed-rules-mirror.md)是两者共用的维护源派生版。共用认知方法 A–F，文章方法 G–I。规则镜像版本和发行版本独立记录。
+**通过 npx 装过 Skill**　用新仓库命令加 `--upgrade`，建议先加 `--preview`。安装器能识别旧包的安装记录。升级共用规则的 Skill 时，已由本安装器管理且依赖它的 Skill 会一起进入计划。在同一版本追加所需 Skill 时，文件完整的依赖可以直接复用。升级备份位于 Skills 扫描目录外，替换报错会按原目录恢复。若进程被强制终止，保留锁和备份，核对目录后再处理。
 
-[六类使用示例](examples/usage.md) · [变更记录](CHANGELOG.md) · [贡献反馈](CONTRIBUTING.md) · [维护与发布](MAINTAINING.md)
+**通过旧公开插件目录安装**　新公开插件 ID 是 `qican-skills`，使用新目录命令选择它。确认切换后，可在宿主移除旧公开安装 `qican-article-system@qican-article-system`，避免出现同名 Skill。私人插件继续使用自己的入口。
 
-本项目处于试用阶段。安装成功只证明文件安装路径通过。实际比较见[验证记录](examples/validation.md)，欢迎提供能改变判断的反馈与反例。
+**已克隆仓库或锁定版本**　旧仓库链接由 GitHub 重定向。历史 v0.3.0 的 Tag、发行包名和内容按原版保留。旧固定版本的命令可以继续取旧版本。已有克隆可改用新远端：
+
+```sh
+git remote set-url origin https://github.com/tangchunhao71-hash/Qican-Skills.git
+```
+
+[历史 Release v0.3.0](https://github.com/tangchunhao71-hash/Qican-Skills/releases/tag/v0.3.0) · [GitHub 仓库重命名说明](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository)
+
+[六类使用示例](examples/usage.md) · [变更记录](CHANGELOG.md) · [反馈与贡献](CONTRIBUTING.md) · [维护与发布](MAINTAINING.md)

@@ -27,7 +27,7 @@ export function checkPublicFiles(files) {
     }
     if (!rel.endsWith('.md')) continue;
     const links = [...content.matchAll(/\]\(([^\s)]+)\)/g)].map(match => match[1]);
-    const refs = [...content.matchAll(/`((?:\.\.\/cyber-qican\/)?references\/[\w.-]+\.md)`/g)].map(match => match[1]);
+    const refs = [...content.matchAll(/`((?:\.\.\/[a-z0-9-]+\/)?references\/[\w.-]+\.md)`/g)].map(match => match[1]);
     for (const link of [...links, ...refs]) {
       const target = link.split('#')[0];
       if (!target || /^https?:\/\//i.test(target)) continue;

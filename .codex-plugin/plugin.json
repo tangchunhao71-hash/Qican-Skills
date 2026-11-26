@@ -1,8 +1,8 @@
 {
   "interface": {
-    "displayName": "Qican Article System",
+    "displayName": "Qican-Skills",
     "shortDescription": "赛博祈蚕 · 深聊与长文创作",
-    "longDescription": "赛博祈蚕陪你想清问题，文章流程在你需要时接续选题、研究、写作、审阅、精修与复盘。",
+    "longDescription": "按需使用赛博祈蚕和长文工作流。两项 Skill 可以独立调用，并共用正式规则镜像。",
     "developerName": "祈蚕",
     "category": "Productivity",
     "capabilities": [
@@ -14,9 +14,9 @@
       "接续这篇文章的当前阶段，核对实际成果。"
     ]
   },
-  "name": "qican-article-system",
-  "version": "0.3.0",
-  "description": "从真实经验发现问题、研究并修正判断，按需接续选题和长文。",
+  "name": "qican-skills",
+  "version": "0.4.0",
+  "description": "Qican-Skills · 赛博祈蚕与长文工作流",
   "author": {
     "name": "祈蚕"
   },
