@@ -1,6 +1,6 @@
 # Qican-Skills · 祈蚕的 Skills 合集
 
-有个问题还说不清，可以用「赛博祈蚕」一起想。已经有想法、选题卡或稿件，可以用「文章流程」从当前阶段继续。两项 Skill 可以独立调用，共用 [规则镜像 v0.36](skills/cyber-qican/references/confirmed-rules-mirror.md)（主分支源码；固定版本安装及 Release 以各自发行记录为准）。
+有个问题还说不清，可以用「赛博祈蚕」一起想。已经有想法、选题卡或稿件，可以用「文章流程」从当前阶段继续。两项 Skill 可以独立调用，共用 [规则镜像 v0.37](skills/cyber-qican/references/confirmed-rules-mirror.md)（主分支源码；固定版本安装及 Release 以各自发行记录为准）。
 
 > 我试了很多学习方法，但真正做事时还是反复卡在同一步。先陪我想一下。
 
