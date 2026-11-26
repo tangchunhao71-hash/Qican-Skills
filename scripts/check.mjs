@@ -11,16 +11,7 @@ assert.deepEqual(readdirSync(output).sort(),[...expected.keys()].sort(),'发行�
 for (const [file,bytes] of expected) assert.deepEqual(readFileSync(join(output,file)),bytes,`发行文件已漂移 ${file}`);
 
 if (process.argv.includes('--git')) {
-  const result = spawnSync('git',['rev-list','--objects','--all'],{cwd:root,encoding:'utf8'});
-  if (result.error || result.status !== 0) throw new Error(result.error?.message || result.stderr);
-  const allowedDirectories = new Set(allowedFiles.flatMap(file => {
-    const parts = file.split('/');
-    return parts.slice(1).map((_,i)=>parts.slice(0,i+1).join('/'));
-  }));
-  const historic = result.stdout.trimEnd().split('\n').flatMap(line=>line.includes(' ')?[line.slice(line.indexOf(' ')+1)]:[]);
-  for (const rel of historic) {
-    assert(allowedFiles.includes(rel) || allowedDirectories.has(rel),`历史出现未批准路径 ${rel}`);
-  }
+  const allowed = new Set(allowedFiles);
   const history = spawnSync('git',['rev-list','--all'],{cwd:root,encoding:'utf8'});
   if (history.error || history.status !== 0) throw new Error(history.error?.message || history.stderr);
   const {checkPublicFiles} = await import('./privacy.mjs');
@@ -31,6 +22,7 @@ if (process.argv.includes('--git')) {
     for (const row of tree.stdout.split('\0').filter(Boolean)) {
       const match = /^100(?:644|755) blob ([0-9a-f]+)\t(.+)$/.exec(row);
       assert(match,`历史出现非普通文件 ${sha}`);
+      assert(allowed.has(match[2]),`历史出现未批准路径 ${match[2]}`);
       const blob = spawnSync('git',['cat-file','blob',match[1]],{cwd:root});
       if (blob.error || blob.status !== 0) throw new Error(blob.error?.message || blob.stderr.toString());
       files.set(match[2],blob.stdout);
