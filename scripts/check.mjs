@@ -5,6 +5,11 @@ import {spawnSync} from 'node:child_process';
 import {allowedFiles, artifacts, releaseTree, root} from './release.mjs';
 
 assert.deepEqual(releaseTree().sort(),[...allowedFiles].sort(),'源码与允许清单不同');
+const mirror = readFileSync(join(root,'skills/cyber-qican/references/confirmed-rules-mirror.md'),'utf8');
+const sourceVersion = /^source_version: qican-longform-feedback-v([0-9.]+)\r?$/m.exec(mirror)?.[1];
+const mirrorVersion = /^mirror_version: ([0-9.]+)\r?$/m.exec(mirror)?.[1];
+assert(sourceVersion && mirrorVersion,'缺少正式规则或镜像版本');
+assert.equal(mirrorVersion,sourceVersion,'规则镜像版本与源规则版本不同');
 const output = join(root,'dist');
 const expected = artifacts();
 assert.deepEqual(readdirSync(output).sort(),[...expected.keys()].sort(),'发行文件清单不同');

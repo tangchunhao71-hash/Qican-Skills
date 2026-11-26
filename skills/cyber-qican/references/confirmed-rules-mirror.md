@@ -2,7 +2,7 @@
 source_version: qican-longform-feedback-v0.35
 source_updated: 2026-11-26
 source_status: confirmed_trial
-mirror_version: 0.34
+mirror_version: 0.35
 scope: public-applicable-methods
 ---
 # 正式规则镜像 · v0.35（可公开适用版）

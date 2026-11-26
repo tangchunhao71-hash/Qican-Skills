@@ -19,23 +19,23 @@
 
 ### 安装到 Agent
 
-需要 Node.js 22.2 或更新版本，以及 npm 和 Git。以下以 Codex 为例，固定到 v0.5.0。
+需要 Node.js 22.2 或更新版本，以及 npm 和 Git。以下以 Codex 为例，固定到 v0.5.1。
 
 ```sh
 # 查看可用 Skill 和依赖
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.0 --list
+npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --list
 
 # 只安装赛博祈蚕
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.0 --target codex --skill cyber-qican
+npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --target codex --skill cyber-qican
 
 # 预览文章流程及其依赖
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.0 --target codex --skill article-workflow --preview
+npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --target codex --skill article-workflow --preview
 
 # 安装全部
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.0 --target codex --all
+npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --target codex --all
 ```
 
-`--skill` 可重复。省略选择时默认全装。`--target` 可用 `codex`、`agents`、`claude-code` 或 `cursor`，也可用 `--dir "<技能目录>"`。安装前会显示计划。同名手动安装默认保留。非交互写入需要你显式指定目标和 `--yes`。GitHub 简写遇到 SSH 配置问题时可用 `npx git+https://github.com/tangchunhao71-hash/Qican-Skills.git#v0.5.0`。
+`--skill` 可重复。省略选择时默认全装。`--target` 可用 `codex`、`agents`、`claude-code` 或 `cursor`，也可用 `--dir "<技能目录>"`。安装前会显示计划。同名手动安装默认保留。非交互写入需要你显式指定目标和 `--yes`。GitHub 简写遇到 SSH 配置问题时可用 `npx git+https://github.com/tangchunhao71-hash/Qican-Skills.git#v0.5.1`。
 
 手动安装时，将所选 Skill 的目录放入宿主 Skills 目录。装文章流程时，把两个目录并排放置，保留相对引用。目录来自宿主文档，当前版本的实测范围见 [验证记录](examples/validation.md)。
 
