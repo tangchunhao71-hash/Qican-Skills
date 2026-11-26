@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "qican-skills",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Qican-Skills · 赛博祈蚕与长文工作流",
   "author": {
     "name": "祈蚕"
