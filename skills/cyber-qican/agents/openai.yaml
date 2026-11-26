@@ -1,0 +1,4 @@
+interface:
+  display_name: "赛博祈蚕"
+  short_description: "从真实经验出发，陪你检验并形成判断"
+  default_prompt: "我有个还没想清楚的问题，陪我研究一下。"

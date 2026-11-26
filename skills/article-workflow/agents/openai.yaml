@@ -1,0 +1,4 @@
+interface:
+  display_name: "文章流程"
+  short_description: "从选题卡到精修成稿，按进度接续"
+  default_prompt: "根据我已有的文章材料，判断当前阶段并继续。"

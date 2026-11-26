@@ -1,0 +1,30 @@
+{
+  "interface": {
+    "displayName": "Qican Article System",
+    "shortDescription": "赛博祈蚕 · 深聊与长文创作",
+    "longDescription": "赛博祈蚕陪你想清问题，文章流程在你需要时接续选题、研究、写作、审阅、精修与复盘。",
+    "developerName": "祈蚕",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive"
+    ],
+    "defaultPrompt": [
+      "陪我想清一个问题，不必写成文章。",
+      "从我的想法出发，判断是否值得发展成一篇文章。",
+      "接续这篇文章的当前阶段，核对实际成果。"
+    ]
+  },
+  "name": "qican-article-system",
+  "version": "0.3.0",
+  "description": "从真实经验发现问题、研究并修正判断，按需接续选题和长文。",
+  "author": {
+    "name": "祈蚕"
+  },
+  "keywords": [
+    "thinking",
+    "research",
+    "longform",
+    "writing"
+  ],
+  "skills": "./skills"
+}
