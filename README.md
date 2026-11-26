@@ -60,12 +60,12 @@ codex plugin add qican-skills@qican-skills
 
 **通过公开插件目录安装**　已在使用 `qican-skills@qican-skills` 的用户可以沿用原目录升级。仍在使用 v0.3.0 旧公开插件的用户，先按上方命令切换到 `qican-skills`。切换成功后可移除旧公开安装 `qican-article-system@qican-article-system`。私人插件继续使用自己的入口。
 
-**已克隆仓库或锁定版本**　旧仓库链接由 GitHub 重定向。历史 v0.3.0 的 Tag、发行包名和内容按原版保留。旧固定版本的命令可以继续取旧版本。已有克隆可改用新远端：
+**已克隆仓库或锁定版本**　旧仓库链接由 GitHub 重定向。公开 Releases 页面只展示最新版。旧 Release 和附件归档为维护者可见的草稿，历史 Git Tag 仍可用于固定版本安装。已有克隆可改用新远端：
 
 ```sh
 git remote set-url origin https://github.com/tangchunhao71-hash/Qican-Skills.git
 ```
 
-[历史 Release v0.3.0](https://github.com/tangchunhao71-hash/Qican-Skills/releases/tag/v0.3.0) · [GitHub 仓库重命名说明](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository)
+[当前公开发行](https://github.com/tangchunhao71-hash/Qican-Skills/releases/latest) · [GitHub 仓库重命名说明](https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository)
 
 [六类使用示例](examples/usage.md) · [变更记录](CHANGELOG.md) · [反馈与贡献](CONTRIBUTING.md) · [维护与发布](MAINTAINING.md)

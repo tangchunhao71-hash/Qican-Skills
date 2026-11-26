@@ -1,5 +1,7 @@
 # 变更记录
 
+[公开发行页](https://github.com/tangchunhao71-hash/Qican-Skills/releases/latest)只展示最新版。历史条目记录当时的发行状态。
+
 ## 未发行 · 分享者与阅读者双向切换
 
 - 主分支共用规则镜像同步至 **v0.36**（F63），补齐 F61 的研究材料消化与自然分享方法。

@@ -20,7 +20,8 @@ npm run check -- --git
 ```
 
 3. 以通过审核的签名提交为准，打标签并发布 Release。当前产物为 `cyber-qican.md`、`qican-skills-skills.zip`、`qican-skills-plugin.zip` 和 `SHA256SUMS`。
-4. 匿名读回仓库和 Release 附件，校验版本、引用、安装与哈希。更新已存在的入口指针。历史 Tag、Release 和附件按原版本保留。
-5. Codex 的仓库目录可用 `codex plugin marketplace upgrade qican-skills` 更新。独立 npx 安装按 README 流程选择 Skill 并升级。
+4. 匿名读回仓库和新版 Release 附件，校验版本、引用、安装与哈希，确认新版标为 Latest。更新已存在的入口指针。
+5. 新版验证通过后，将其他已公开的 Release 转为草稿。维护者可用 `gh release edit <旧版版本号> --draft` 逐个处理。保留历史 Git Tag、Release 记录和附件。匿名复查 Releases 页面只展示最新版，维护者复查旧附件仍随草稿保留。
+6. Codex 的仓库目录可用 `codex plugin marketplace upgrade qican-skills` 更新。独立 npx 安装按 README 流程选择 Skill 并升级。
 
 这套流程由获授权的维护任务启动。公开仓库保存已审阅的方法镜像和构建工具。
