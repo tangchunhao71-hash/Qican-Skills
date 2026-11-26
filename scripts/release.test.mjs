@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {checkPublicFiles} from './privacy.mjs';
-import {artifacts,sha256,skillFiles} from './release.mjs';
+import {artifacts,sha256,singleFile,skillFiles} from './release.mjs';
 
 const sample = (name,body)=>new Map([[name,Buffer.from(body)]]);
 test('隐私检查拦截虚构凭证、私人服务、个人路径、二进制和越界引用',()=>{
@@ -26,4 +26,10 @@ test('发行 ZIP、摘要和单文件可重复生成',()=>{
   assert.doesNotMatch(stand,/references\//);
   assert.match(a.get('SHA256SUMS').toString('utf8'),new RegExp(sha256(a.get('cyber-qican.md'))));
   assert(skillFiles().size > 8);
+});
+
+test('整个 Skill 源使用 Windows CRLF 时，单文件输出和 LF 相同',()=>{
+  const files=skillFiles();
+  const crlf=new Map([...files].map(([name,source])=>[name,Buffer.from(source.toString('utf8').replaceAll('\n','\r\n'))]));
+  assert.deepEqual(singleFile(files),singleFile(crlf));
 });

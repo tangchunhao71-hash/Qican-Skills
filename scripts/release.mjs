@@ -39,7 +39,7 @@ export function skillFiles() {
   }
   checkPublicFiles(files);
   for (const name of names) {
-    const body = files.get(`skills/${name}/SKILL.md`)?.toString('utf8');
+    const body = files.get(`skills/${name}/SKILL.md`)?.toString('utf8').replaceAll('\r\n','\n');
     if (!body?.startsWith(`---\nname: ${name}\ndescription: `) || !body.split('\n---\n')[1]?.trim()) {
       throw new Error(`Skill 名称或入口无效 ${name}`);
     }
@@ -53,7 +53,7 @@ function readBody(raw) {
 }
 
 export function singleFile(files) {
-  const text = rel => files.get(`skills/cyber-qican/${rel}`).toString('utf8');
+  const text = rel => files.get(`skills/cyber-qican/${rel}`).toString('utf8').replaceAll('\r\n','\n');
   const embedded = new Map([
     ['references/confirmed-rules-mirror.md','本文件的「正式规则镜像」'],
     ['references/reasoning.md','本文件的「思考时如何选用规则」'],

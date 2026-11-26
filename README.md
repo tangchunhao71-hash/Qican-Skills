@@ -22,6 +22,7 @@
 npx github:tangchunhao71-hash/qican-article-system
 npx github:tangchunhao71-hash/qican-article-system#v0.3.0 --target codex --preview
 npx github:tangchunhao71-hash/qican-article-system#v0.3.0 --target codex
+npx git+https://github.com/tangchunhao71-hash/qican-article-system.git#v0.3.0 --target codex
 ```
 
 `--target` 可用 `codex`、`agents`、`claude-code` 或 `cursor`。Codex 与 Agents 共享 `~/.agents/skills`。`--dir "<目标技能目录>"` 可选项目或自定义目录。已有同名目录时默认停下。由本安装器安装的版本可加 `--upgrade` 更新，备份位置会显示在结果里。手动安装的版本请先自行备份并移出扫描目录。无人值守时，只有你显式提供目标和 `--yes` 才执行。

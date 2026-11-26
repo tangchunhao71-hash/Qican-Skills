@@ -1,6 +1,7 @@
 [
   ".agents/plugins/marketplace.json",
   ".codex-plugin/plugin.json",
+  ".gitattributes",
   ".gitignore",
   "CHANGELOG.md",
   "CONTRIBUTING.md",
