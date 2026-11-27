@@ -21,8 +21,8 @@ test('发行 ZIP、摘要和单文件可重复生成',()=>{
   const a=artifacts(), b=artifacts();
   assert.deepEqual(a,b);
   const stand=a.get('cyber-qican.md').toString('utf8');
-  assert.match(stand,/正式规则镜像/);
-  assert.match(stand,/思考示例/);
+  assert.doesNotMatch(stand,/## G\. 文章专用/);
+  assert.match(stand,/判断依据与例子/);
   assert.match(stand,/按需研究祈蚕的公开观点/);
   assert.doesNotMatch(stand,/references\//);
   assert.match(a.get('SHA256SUMS').toString('utf8'),new RegExp(sha256(a.get('cyber-qican.md'))));

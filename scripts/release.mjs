@@ -85,23 +85,16 @@ function readBody(raw) {
 export function singleFile(files) {
   const text = rel => files.get(`skills/cyber-qican/${rel}`).toString('utf8').replaceAll('\r\n','\n');
   const embedded = new Map([
-    ['references/confirmed-rules-mirror.md','本文件的「正式规则镜像」'],
-    ['references/reasoning.md','本文件的「思考时如何选用规则」'],
-    ['references/examples.md','本文件的「思考示例」'],
+    ['references/reasoning.md','本文件的「判断遇到困难时」'],
+    ['references/examples.md','本文件的「判断依据与例子」'],
     ['references/public-perspectives.md','本文件的「按需研究祈蚕的公开观点」'],
   ]);
   let body = readBody(text('SKILL.md'));
   for (const [file,label] of embedded) body = body.replaceAll('\x60'+file+'\x60',label);
-  body = body
-    .replace('转入同插件 `article-workflow`','向用户交付可转交文章流程的文字材料')
-    .replace('两 Skill 共用镜像，按创作阶段选择专用规则。','有创作需求时，按阶段选用下文 G–I 的文章方法。');
-  const sections = [...embedded].map(([file]) => readBody(text(file))
-    .replace(/^# .*$/m, header => file.endsWith('examples.md') ? '## 思考示例（虚构）' : '#' + header)
-    .replaceAll('`confirmed-rules-mirror.md`','「正式规则镜像」')
-    .replaceAll('继续使用 A—F，并按需要读取 G— I','继续使用 A—F，并按需要使用本文件中的 G—I'));
-  const version = /^mirror_version:\s*(.+)$/m.exec(text('references/confirmed-rules-mirror.md'))?.[1];
+  body = body.replace('转入同插件 `article-workflow`','交付可转交文章流程的文字材料');
+  const sections = [...embedded.keys()].map(file => readBody(text(file)).replace(/^# /m,'## '));
   return Buffer.from(
-    `<!-- 由公开源码生成 · 发行 ${manifest.version} · 方法镜像 ${version} -->\n`
+    `<!-- 由公开源码生成 · 发行 ${manifest.version} -->\n`
     + '把本文件全文交给 AI，再讲你的问题。文中的方法、导航和例子均已附在这里。\n\n'
     + [body,...sections].join('\n\n---\n\n')+'\n'
   );
