@@ -1,4 +1,5 @@
 [
   {"name":"cyber-qican","requires":[]},
-  {"name":"article-workflow","requires":["cyber-qican"]}
+  {"name":"article-workflow","requires":["cyber-qican"]},
+  {"name":"quote-visuals","requires":[]}
 ]

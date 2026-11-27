@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "qican-skills",
-  "version": "0.5.1",
-  "description": "Qican-Skills · 赛博祈蚕与长文工作流",
+  "version": "0.6.0",
+  "description": "Qican-Skills · 深聊、文章流程与引用图解",
   "author": {
     "name": "祈蚕"
   },
@@ -16,8 +16,8 @@
     "com.openai": {
       "interface": {
         "displayName": "Qican-Skills",
-        "shortDescription": "赛博祈蚕 · 深聊与长文创作",
-        "longDescription": "按需使用赛博祈蚕和长文工作流。两项 Skill 可以独立调用，并共用正式规则镜像。",
+        "shortDescription": "深聊、文章流程与引用图解",
+        "longDescription": "用赛博祈蚕想清问题，用文章流程接续创作，用引用图解把正文编排成手机可读的图片。",
         "developerName": "祈蚕",
         "category": "Productivity",
         "capabilities": [

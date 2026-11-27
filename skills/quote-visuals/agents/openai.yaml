@@ -1,0 +1,4 @@
+interface:
+  display_name: "引用图解"
+  short_description: "把正文或 Markdown 剪藏做成可手机阅读的中文图解"
+  default_prompt: "用 $quote-visuals 将这段正文做成一张引用图解。"

@@ -17,6 +17,7 @@ function fixture(t) {
   });
   return sandbox;
 }
+const articleSkills = ['cyber-qican', 'article-workflow'];
 const entry = join(root,'bin/install.js');
 const cli = args => spawnSync(process.execPath,[entry,...args],{encoding:'utf8'});
 const read = file => readFileSync(file,'utf8');
@@ -44,7 +45,7 @@ test('检测多个宿主，只选一个，允许取消', async t=>{
   assert.equal(existsSync(cursor.dir),false);
 });
 
-test('首次安装双 Skill，同版可复用，自定义目录可用', t=>{
+test('首次安装全部 Skill，同版可复用，自定义目录可用', t=>{
   const target = join(fixture(t),'资料 空间','skills');
   const first = cli(['--dir',target,'--yes']);
   assert.equal(first.status,0,first.stderr);
@@ -82,11 +83,11 @@ test('联合升级备份旧文件并清理本次安装目录中的过期文件',
   assert.equal(existsSync(old),false);
   assert.equal(read(join(backup,names[0],'stale.md')),'legacy content');
   assert.equal(dirname(dirname(backup)),dirname(target));
-  assert.deepEqual(installedAt(target).map(row=>row.receipt.version),[manifest.version,manifest.version]);
+  assert.deepEqual(installedAt(target).map(row=>row.receipt.version),names.map(()=>manifest.version));
   assert.equal(read(join(other,'SKILL.md')),'untouched');
 });
 
-test('第二个目录替换失败时回滚两个旧版本', t=>{
+test('第二个目录替换失败时恢复已有版本', t=>{
   const target = join(fixture(t),'skills');
   install(target);
   for (const name of names) writeFileSync(join(target,name,'old.md'),name);
@@ -114,7 +115,7 @@ test('独立安装赛博祈蚕，随后追加文章流程时复用共用规则',
   const add=cli(['--dir',target,'--skill','article-workflow','--yes']);
   assert.equal(add.status,0,add.stderr);
   assert.match(add.stdout,/计划 cyber-qican · 已就绪/);
-  assert.deepEqual(installedAt(target).map(row=>row.name),names);
+  assert.deepEqual(installedAt(target).map(row=>row.name),articleSkills);
   const entry=read(join(target,'article-workflow','SKILL.md'));
   const ref=/`(\.\.\/cyber-qican\/references\/confirmed-rules-mirror\.md)`/.exec(entry)[1];
   assert.deepEqual(readFileSync(resolve(join(target,'article-workflow'),ref)),before);
@@ -127,13 +128,13 @@ test('从空目录选择文章流程会安装其依赖，--all 与 --skill 互�
   assert.equal(existsSync(target),false);
   const selected=cli(['--dir',target,'--skill','article-workflow','--yes']);
   assert.equal(selected.status,0,selected.stderr);
-  assert.deepEqual(installedAt(target).map(row=>row.name),names);
+  assert.deepEqual(installedAt(target).map(row=>row.name),articleSkills);
 });
 
 test('旧 v0.3.0 安装记录可迁移，升级共用依赖会保留并迁移已装文章流程',t=>{
   const target=join(fixture(t),'skills');
-  install(target);
-  for (const name of names) {
+  install(target,{skills:articleSkills});
+  for (const name of articleSkills) {
     const receipt={package:'qican-article-system',skill:name,version:'0.3.0'};
     writeFileSync(join(target,name,'.qican-release.json'),JSON.stringify(receipt));
   }
@@ -142,10 +143,19 @@ test('旧 v0.3.0 安装记录可迁移，升级共用依赖会保留并迁移已
   assert.match(preview.stdout,/article-workflow · 备份并替换 · 0\.3\.0/);
   assert.throws(()=>install(target,{skills:['cyber-qican']}),/默认保留/);
   const updated=install(target,{skills:['cyber-qican'],upgrade:true});
-  assert.deepEqual(updated.changed,names);
-  for (const name of names) {
+  assert.deepEqual(updated.changed,articleSkills);
+  for (const name of articleSkills) {
     const old=JSON.parse(read(join(updated.backup,name,'.qican-release.json')));
     assert.equal(old.package,'qican-article-system');
   }
   assert.deepEqual(installedAt(target).map(row=>row.receipt.package),[manifest.name,manifest.name]);
+});
+
+test('引用图解从空目录独立安装，包括渲染器和原创示例',t=>{
+  const target=join(fixture(t),'skills');
+  const result=cli(['--dir',target,'--skill','quote-visuals','--yes']);
+  assert.equal(result.status,0,result.stderr);
+  assert.deepEqual(installedAt(target).map(row=>row.name),['quote-visuals']);
+  assert.equal(existsSync(join(target,'quote-visuals','scripts','render.py')),true);
+  assert.equal(existsSync(join(target,'quote-visuals','examples','handoff.json')),true);
 });

@@ -1,0 +1,5 @@
+Noto Sans SC and Noto Serif SC, unmodified Google Fonts variable TTFs.
+Upstream revision: 40cd5edf3831c9e0012b96345c476598595b9970
+https://github.com/google/fonts/tree/40cd5edf3831c9e0012b96345c476598595b9970/ofl/notosanssc
+https://github.com/google/fonts/tree/40cd5edf3831c9e0012b96345c476598595b9970/ofl/notoserifsc
+License texts: NotoSansSC-OFL.txt and NotoSerifSC-OFL.txt.

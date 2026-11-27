@@ -1,7 +1,7 @@
 {
   "name": "qican-skills",
-  "version": "0.5.1",
-  "description": "Qican-Skills · 赛博祈蚕与长文工作流",
+  "version": "0.6.0",
+  "description": "Qican-Skills · 深聊、文章流程与引用图解",
   "license": "MIT",
   "private": true,
   "type": "module",

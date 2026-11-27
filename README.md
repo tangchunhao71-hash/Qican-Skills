@@ -1,6 +1,6 @@
 # Qican-Skills · 祈蚕的 Skills 合集
 
-有个问题还说不清，可以用「赛博祈蚕」一起想。已经有想法、选题卡或稿件，可以用「文章流程」从当前阶段继续。两项 Skill 可以独立调用，共用 [规则镜像 v0.37](skills/cyber-qican/references/confirmed-rules-mirror.md)（主分支源码；固定版本安装及 Release 以各自发行记录为准）。
+有个问题还说不清，可以用「赛博祈蚕」一起想。已经有想法、选题卡或稿件，可以用「文章流程」从当前阶段继续。有正文或 Markdown 剪藏，可以用「引用图解」做一张手机可读的图。前两项共用 [规则镜像 v0.37](skills/cyber-qican/references/confirmed-rules-mirror.md)（主分支源码；固定版本安装及 Release 以各自发行记录为准）。
 
 > 我试了很多学习方法，但真正做事时还是反复卡在同一步。先陪我想一下。
 
@@ -10,6 +10,7 @@
 | --- | --- | --- |
 | [赛博祈蚕 · cyber-qican](skills/cyber-qican/SKILL.md) | 定义问题，找反例和知识缺口，形成并检验自己的判断。 | 无 |
 | [文章流程 · article-workflow](skills/article-workflow/SKILL.md) | 接续选题、研究、交接、初稿、审阅、精修和发布后复盘。 | cyber-qican 提供共用规则文件 |
+| [引用图解 · quote-visuals](skills/quote-visuals/SKILL.md) | 把正文或 Markdown 剪藏排成可下载的手机图解。 | 无 Skill 依赖，渲染使用 Python 3、Pillow 与 Noto 字体 |
 
 ## 三种使用方式
 
@@ -19,23 +20,26 @@
 
 ### 安装到 Agent
 
-需要 Node.js 22.2 或更新版本，以及 npm 和 Git。以下以 Codex 为例，固定到 v0.5.1。
+需要 Node.js 22.2 或更新版本，以及 npm 和 Git。以下以 Codex 为例，固定到 v0.6.0。
 
 ```sh
 # 查看可用 Skill 和依赖
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --list
+npx github:tangchunhao71-hash/Qican-Skills#v0.6.0 --list
 
 # 只安装赛博祈蚕
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --target codex --skill cyber-qican
+npx github:tangchunhao71-hash/Qican-Skills#v0.6.0 --target codex --skill cyber-qican
 
 # 预览文章流程及其依赖
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --target codex --skill article-workflow --preview
+npx github:tangchunhao71-hash/Qican-Skills#v0.6.0 --target codex --skill article-workflow --preview
+
+# 只安装引用图解
+npx github:tangchunhao71-hash/Qican-Skills#v0.6.0 --target codex --skill quote-visuals
 
 # 安装全部
-npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --target codex --all
+npx github:tangchunhao71-hash/Qican-Skills#v0.6.0 --target codex --all
 ```
 
-`--skill` 可重复。省略选择时默认全装。`--target` 可用 `codex`、`agents`、`claude-code` 或 `cursor`，也可用 `--dir "<技能目录>"`。安装前会显示计划。同名手动安装默认保留。非交互写入需要你显式指定目标和 `--yes`。GitHub 简写遇到 SSH 配置问题时可用 `npx git+https://github.com/tangchunhao71-hash/Qican-Skills.git#v0.5.1`。
+`--skill` 可重复。省略选择时默认全装。`--target` 可用 `codex`、`agents`、`claude-code` 或 `cursor`，也可用 `--dir "<技能目录>"`。安装前会显示计划。同名手动安装默认保留。非交互写入需要你显式指定目标和 `--yes`。GitHub 简写遇到 SSH 配置问题时可用 `npx git+https://github.com/tangchunhao71-hash/Qican-Skills.git#v0.6.0`。
 
 手动安装时，将所选 Skill 的目录放入宿主 Skills 目录。装文章流程时，把两个目录并排放置，保留相对引用。目录来自宿主文档，当前版本的实测范围见 [验证记录](examples/validation.md)。
 
@@ -44,6 +48,8 @@ npx github:tangchunhao71-hash/Qican-Skills#v0.5.1 --target codex --all
 | Codex / Agents | `~/.agents/skills` |
 | Claude Code | `~/.claude/skills` |
 | Cursor | `~/.cursor/skills` |
+
+引用图解首次使用可从[原创建例](skills/quote-visuals/examples/handoff-source.md)开始，按[运行方式](skills/quote-visuals/references/layout.md)生成一张 PNG。插画与个人角色均可选。
 
 ### Codex 插件目录
 
